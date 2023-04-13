@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct FeedView: View {
-    
+
     @State private var showNewTweetView = false
     @ObservedObject var viewModel = PostViewModel()
-//    @State private var isLoading = false
-    
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             ScrollView {
@@ -22,11 +21,8 @@ struct FeedView: View {
                             .padding()
                     }
                 }
-//                .onAppear {
-//                    isLoading = true
-//                    viewModel.fetchPosts()
-//                    isLoading = false
-//                }
+            }.refreshable {
+                print("Do your refresh work here")
             }
             Button {
                 showNewTweetView.toggle()
@@ -44,20 +40,7 @@ struct FeedView: View {
             .fullScreenCover(isPresented: $showNewTweetView) {
                 NewPostView()
             }
-//            if isLoading {
-//                VStack {
-//                    ProgressView()
-//                    // and if you want to be explicit / future-proof...
-//                    // .progressViewStyle(CircularProgressViewStyle())
-//                }
-//            }
+
         }
     }
 }
-
-struct FeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        FeedView()
-    }
-}
-

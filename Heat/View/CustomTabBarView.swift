@@ -16,6 +16,7 @@ struct CustomTabBar: View {
     @State var selectedIndex = 0
     @State var shouldShowModel = false
     @State var shouldShowLogOutOptions = false
+//    @State private var isLoading = false
     
     @ObservedObject var favorites = Favorites()
     @EnvironmentObject var viewModel: AuthViewModel
@@ -77,7 +78,6 @@ struct CustomTabBar: View {
         }
         
             ZStack {
-                
                 Spacer().fullScreenCover(isPresented: $shouldShowModel, content: {
                     Button(action: {shouldShowModel.toggle()}, label: {
 //                        ArtistOfTheWeekView()
@@ -88,6 +88,8 @@ struct CustomTabBar: View {
                 case 0:
                     NavigationView {
                         ZStack {
+//                            ProgressView()
+//                                .progressViewStyle(CircularProgressViewStyle(tint: .yellow))
                             FeedView()
 
                         }
