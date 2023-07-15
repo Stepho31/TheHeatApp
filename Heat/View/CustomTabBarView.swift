@@ -16,10 +16,11 @@ struct CustomTabBar: View {
     @State var selectedIndex = 0
     @State var shouldShowModel = false
     @State var shouldShowLogOutOptions = false
-//    @State private var isLoading = false
     
     @ObservedObject var favorites = Favorites()
     @EnvironmentObject var viewModel: AuthViewModel
+    
+    var user: AppUser?
     
     let tabBarImageNames = ["music.note.house", "person.2.crop.square.stack", "flame", "heart", "person.crop.square"]
     
@@ -34,7 +35,7 @@ struct CustomTabBar: View {
                     .clipped()
                     .cornerRadius(50)
                     .overlay(RoundedRectangle(cornerRadius: 44)
-                        .stroke(Color(.label), lineWidth: 1)
+                        .stroke(Color(.systemRed), lineWidth: 1)
                     )
                 .shadow(radius: 5)
                 
@@ -42,6 +43,7 @@ struct CustomTabBar: View {
                     let email = viewModel.currentUser?.email.replacingOccurrences(of: "@gmail.com", with: "") ?? ""
                     Text(email)
                     .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(Color(.systemRed))
                     HStack {
                         Circle()
                             .foregroundColor(.green)
@@ -59,7 +61,7 @@ struct CustomTabBar: View {
                 } label: {
                     Image(systemName: "gear")
                         .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(Color(.label))
+                        .foregroundColor(Color(.systemRed))
                     
                 }
             }
@@ -80,16 +82,13 @@ struct CustomTabBar: View {
             ZStack {
                 Spacer().fullScreenCover(isPresented: $shouldShowModel, content: {
                     Button(action: {shouldShowModel.toggle()}, label: {
-//                        ArtistOfTheWeekView()
-                        WelcomePageView()
+                        ArtisOfTheWeekView()
                     })
                 })
                 switch selectedIndex {
                 case 0:
                     NavigationView {
                         ZStack {
-//                            ProgressView()
-//                                .progressViewStyle(CircularProgressViewStyle(tint: .yellow))
                             FeedView()
 
                         }
@@ -105,7 +104,7 @@ struct CustomTabBar: View {
                     
                 default:
                     
-                    Profile()
+                    Profile(user: viewModel.currentUser!)
                 }
                 
             }

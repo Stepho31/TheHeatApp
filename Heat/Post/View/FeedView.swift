@@ -14,14 +14,15 @@ struct FeedView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 LazyVStack {
                     ForEach(viewModel.posts) { post in
                         PostView(post: post)
                             .padding()
                     }
                 }
-            }.refreshable {
+            }
+            .refreshable {
                 print("Do your refresh work here")
             }
             Button {

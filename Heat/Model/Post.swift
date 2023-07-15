@@ -15,7 +15,11 @@ struct Post: Identifiable, Decodable {
     let timestamp: Timestamp
     let uid: String
     var likes: Int
-    
+    var imageURL: String?
+    let musicURL: URL?
+
     var user: AppUser?
-    
+    var didLike: Bool? = false
+
 }
+

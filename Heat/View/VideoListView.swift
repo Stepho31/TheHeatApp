@@ -23,12 +23,16 @@ struct VideoListView: View {
             List(videos, id: \.id) { video in
                 NavigationLink(destination: VideoDetailView(video: video), label: {
                     VideoCell(video: video)
-
+                    
                 })
                 
                 
-    
-            
+                
+                
+            }
+            .listStyle(.plain) // Set the list style to plain
+            .onAppear {
+                UIScrollView.appearance().showsVerticalScrollIndicator = false // Hide the scroll indicator
             }.navigationBarTitle("Library")
                 .navigationBarTitleDisplayMode(.inline)
         }.environmentObject(favorites)

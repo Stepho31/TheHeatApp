@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class UploadPostViewModel: ObservableObject {
     
@@ -13,14 +14,27 @@ class UploadPostViewModel: ObservableObject {
     
     let service = PostService()
     
-    func uploadPost(withCaption caption: String) {
-        service.uploadPost(caption: caption) { success in
-            if success {
-                //dissmiss screen
+    
+    func uploadPost(withCaption caption: String, image: UIImage?, musicFileURL: URL?) {
+        guard let musicFileURL = musicFileURL else {
+            // Show error message to user
+            print("DEBUG: Music file URL is nil.")
+            return
+        }
+        
+        print("DEBUG: Uploading post with caption: \(caption), image: \(image as Any), musicFileURL: \(musicFileURL).")
+        
+        service.uploadPost(caption: caption, image: image, musicURL: musicFileURL) { result in
+            switch result {
+            case .success:
+                // Dismiss screen
                 self.didUploadPost = true
-            } else {
-                //show error message to user
+            case .failure(let error):
+                // Show error message to user
+                print("DEBUG: Failed to upload post with error: \(error.localizedDescription)")
             }
         }
     }
+
 }
+

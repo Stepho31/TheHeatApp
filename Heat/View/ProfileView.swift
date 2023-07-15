@@ -11,25 +11,34 @@ import SDWebImageSwiftUI
 struct Profile: View {
     
     @ObservedObject var profileService = ProfileService()
+    @ObservedObject var profileViewModel: ProfileViewModel
     @EnvironmentObject var viewModel: AuthViewModel
     @State private var selection = 1
-    var user: AppUser?
+
+    
+    init(user: AppUser) {
+        self.profileViewModel = ProfileViewModel(user: user)
+    }
     
     var body: some View {
         NavigationView {
             ScrollView {
                 
                 VStack(alignment: .center, spacing: 4) {
+                    
                     ProfileHeader(user: self.viewModel.currentUser, following: $profileService.following, followers: $profileService.followers)
-                    Button(action:{}){
-                        Text("Edit Profile").font(.title).padding(.horizontal)
-                            .foregroundColor(.white)
-                            .background(Color(.red))
-                            .cornerRadius(300)
-                            .frame(width: 300, height: 50)
+                    
+                }
+                VStack {
+                    ScrollView {
+                        LazyVStack {
+                            ForEach(profileViewModel.posts) { post in
+                                PostView(post: post)
+                                    .padding()
+                            }
+                        }
+                        
                     }
-                    
-                    
                 }
                 
             }
@@ -45,5 +54,6 @@ struct Profile: View {
             })
         }
     }
+    
     
 }

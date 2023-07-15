@@ -8,6 +8,7 @@
 import Foundation
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import Firebase
 
 struct AppUser: Identifiable, Codable {
     
@@ -17,6 +18,7 @@ struct AppUser: Identifiable, Codable {
     var profileImageUrl: String
     var email: String
     var searchName: [String]
+    
     
     init(data: [String: Any]) {
         self.id = data["uid"] as? String ?? ""

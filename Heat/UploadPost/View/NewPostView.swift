@@ -7,9 +7,16 @@
 
 import SwiftUI
 import SDWebImageSwiftUI
+import UniformTypeIdentifiers
+import AVKit
+import AVFoundation
 
 struct NewPostView: View {
     
+    @State private var selectedMusicFile: URL?
+    @State private var selectedImage: UIImage?
+    @State private var showImagePicker = false
+    @State private var showMusicPicker = false
     @State private var caption = ""
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -28,7 +35,8 @@ struct NewPostView: View {
                 Spacer()
 
                 Button {
-                    viewModel.uploadPost(withCaption: caption)
+                    viewModel.uploadPost(withCaption: caption, image: selectedImage, musicFileURL: selectedMusicFile)
+                    presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("Post")
                         .bold()
@@ -43,31 +51,73 @@ struct NewPostView: View {
             .padding()
             
             HStack(alignment: .top) {
-                if let currentUser = authViewModel.currentUser {
-                    WebImage(url: URL(string: currentUser.profileImageUrl))
-                        .resizable()
-                        .scaledToFill()
-                        .clipShape(Circle())
-                        .frame(width: 64, height: 64)
+                VStack {
+                    if let currentUser = authViewModel.currentUser {
+                        WebImage(url: URL(string: currentUser.profileImageUrl))
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 64, height: 64)
+                            .clipped()
+                            .cornerRadius(50)
+                            .overlay(RoundedRectangle(cornerRadius: 44)
+                                .stroke(Color(.systemRed), lineWidth: 1)
+                            )
+                    }
+                    Button {
+                        self.showImagePicker = true
+                    } label: {
+                        Image(systemName: "photo")
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(Color(.systemRed))
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                    }
+                    .sheet(isPresented: $showImagePicker) {
+                        ImagePicker(selectedImage: $selectedImage)
+                    }
+                    Button {
+                        self.showMusicPicker = true
+                    } label: {
+                        Image(systemName: "music.quarternote.3")
+                            .padding(.horizontal)
+                            .padding(.vertical, 8)
+                            .background(Color(.systemRed))
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                    }
+                    .sheet(isPresented: $showMusicPicker) {
+                        DocumentPicker(supportedTypes: [.audio]) { url in
+                            self.selectedMusicFile = url
+                        }
+                    }
                 }
-               
                 
-                
-                TextArea("What's Hot", text: $caption)
+                VStack(alignment: .leading) {
+                    OptionalImage(uiImage: selectedImage)
+                        .frame(maxWidth: .infinity, maxHeight: 200)
+                    
+                    if let musicFileURL = selectedMusicFile {
+                        OptionalMusic(url: musicFileURL)
+                    }
+                                      
+                    TextArea("What's Hot?", text: $caption)
+                }
                 
             }
             .padding()
         }
         .onReceive(viewModel.$didUploadPost) { success in
             if success {
+                print("DEBUG: Upload successful. Dismissing view.")
                 presentationMode.wrappedValue.dismiss()
             }
+//            else {
+//                print("DEBUG: Upload failed.")
+//            }
         }
-    }
-}
 
-//struct NewTweetView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NewPostView()
-//    }
-//}
+    }
+    
+
+}
